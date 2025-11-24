@@ -1,0 +1,23 @@
+{
+  "name": "notes-api",
+  "version": "1.0.0",
+  "description": "Simple Notes API with DynamoDB and Serverless",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "serverless deploy"
+  },
+  "keywords": [
+    "serverless",
+    "aws",
+    "lambda",
+    "dynamodb",
+    "api"
+  ],
+ "dependencies": {
+    "aws-sdk": "^2.1490.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "serverless": "^3.38.0"
+  }
+}
