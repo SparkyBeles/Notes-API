@@ -40,77 +40,114 @@ notes-api/
 
 #### Sign Up
 
-- **POST** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/auth/signup`
-- **Body:**
+**POST**
+```
+https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/auth/signup
+```
+
+**Body:**
   ```json
   {
     "email": "test@test.com",
     "password": "yourpassword"
   }
   ```
-- **Response:**
-  ```json
-  {
-    "success": true,
-    "message": "User created successfully",
-    "userId": "uuid"
-  }
-  ```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "User created successfully",
+  "userId": "uuid"
+}
+```
+
+---
 
 #### Sign In
 
-- **POST** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/auth/signin`
-- **Body:**
+**POST**
+```
+https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/auth/signin
+```
+
+**Body:**
   ```json
   {
     "email": "test@test.com",
     "password": "yourpassword"
   }
   ```
-- **Response:**
-  ```json
-  {
-    "success": true,
-    "message": "Sign in successful",
-    "token": "jwt-token-here"
-  }
-  ```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Sign in successful",
+  "token": "jwt-token-here"
+}
+```
 
+---
 
 #### Create Note
 
-- **POST** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes`
-- **Body:**
-  ```json
-  {
-    "title": "My Note",
-    "content": "Note content here"
-  }
-  ```
+**POST**
+```
+https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes
+```
+
+**Body:**
+```json
+{
+  "title": "My Note",
+  "content": "Note content here"
+}
+```
+
+---
 
 #### List Notes
 
-- **GET** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes`
-- Returns only notes belonging to the authenticated user
+**GET**
+```
+https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes
+```
+
+Returns only notes belonging to the authenticated user
+
+---
 
 #### Get Note
 
-- **GET** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}`
-- Returns note only if it belongs to the authenticated user
+**GET**
+```
+https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}
+```
+
+Returns note only if it belongs to the authenticated user
+
+---
 
 #### Update Note
 
-- **PUT** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}`
-- **Body:**
-  ```json
-  {
-    "title": "Updated Title",
-    "content": "Updated content"
-  }
-  ```
+**PUT**
+```
+https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}
+```
 
+**Body:**
+```json
+{
+  "title": "Updated Title",
+  "content": "Updated content"
+}
+```
+
+---
 
 #### Delete Note
 
-- **DELETE** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}`
+**DELETE**
+```
+https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}
+```
 
