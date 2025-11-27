@@ -13,11 +13,19 @@
     "dynamodb",
     "api"
   ],
- "dependencies": {
-    "aws-sdk": "^2.1490.0",
-    "uuid": "^9.0.1"
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.936.0",
+    "@aws-sdk/lib-dynamodb": "^3.936.0",
+    "@middy/core": "4.0.0",
+    "@middy/http-error-handler": "4.0.0",
+    "@middy/http-json-body-parser": "4.0.0",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^11.0.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "serverless": "^3.38.0"
   }
 }

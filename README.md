@@ -1,41 +1,109 @@
 # Notes API
 
-A simple serverless REST API for managing notes with authentication, built using AWS Lambda, DynamoDB, and Serverless Framework.
+A serverless REST API built with AWS Lambda,Middy, DynamoDB and Serverless Framework.
 
 ## Project Structure
 
 ```
 notes-api/
-├── auth/                  # Authentication functions
-│   ├── signin.js          # Sign in handler
-│   └── signup.js          # Sign up handler
-├── functions/             # Notes CRUD functions
-│   ├── createNote.js      # Create a new note
-│   ├── getNote.js         # Get a single note
-│   ├── listNotes.js       # List all notes
-│   ├── updateNote.js      # Update a note
-│   └── deleteNote.js      # Delete a note
-├── .env                   # Environment variables (AWS credentials)
-├── serverless.yml         # Serverless Framework configuration
-└── package.json           # Node.js dependencies
+├── auth/                  # Authentication handlers
+│   ├── signin.js          # User sign in with JWT generation
+│   └── signup.js          # User registration with password hashing
+├── functions/             # Notes CRUD operations (auth required)
+│   ├── createNote.js      # Create new note
+│   ├── getNote.js         # Retrieve single note
+│   ├── listNotes.js       # List all user notes
+│   ├── updateNote.js      # Update existing note
+│   └── deleteNote.js      # Delete note
+├── middleware/            # Custom middleware
+│   └── auth.js            # JWT validation middleware
+├── utils/                 # Utility modules
+│   ├── dynamodb.js        # DynamoDB client configuration
+│   └── response.js        # HTTP response helper
+├── .env                   # Environment configuration
+├── serverless.yml         # Serverless deployment config
+└── package.json           # Dependencies
 ```
+
+
 
 ## API Endpoints
 
-### Authentication
+### Authentication (Public)
 
-- `POST /auth/signup` - Create new user account
-- `POST /auth/signin` - Sign in user
+#### Sign Up
 
-### Notes
+- **POST** `/auth/signup`
+- **Body:**
+  ```json
+  {
+    "email": "test@test.com",
+    "password": "yourpassword"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "success": true,
+    "message": "User created successfully",
+    "userId": "uuid"
+  }
+  ```
 
-- `POST /notes` - Create a new note
-- `GET /notes` - List all notes
-- `GET /notes/{id}` - Get a specific note
-- `PUT /notes/{id}` - Update a note
-- `DELETE /notes/{id}` - Delete a note
+#### Sign In
 
-### Table
+- **POST** `/auth/signin`
+- **Body:**
+  ```json
+  {
+    "email": "test@test.com",
+    "password": "yourpassword"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "success": true,
+    "message": "Sign in successful",
+    "token": "jwt-token-here"
+  }
+  ```
 
-- `NOTES_TABLE` - DynamoDB table name for notes
-- `USERS_TABLE` - DynamoDB table name for users
+
+#### Create Note
+
+- **POST** `/notes`
+- **Body:**
+  ```json
+  {
+    "title": "My Note",
+    "content": "Note content here"
+  }
+  ```
+
+#### List Notes
+
+- **GET** `/notes`
+- Returns only notes belonging to the authenticated user
+
+#### Get Note
+
+- **GET** `/notes/{id}`
+- Returns note only if it belongs to the authenticated user
+
+#### Update Note
+
+- **PUT** `/notes/{id}`
+- **Body:**
+  ```json
+  {
+    "title": "Updated Title",
+    "content": "Updated content"
+  }
+  ```
+
+
+#### Delete Note
+
+- **DELETE** `/notes/{id}`
+

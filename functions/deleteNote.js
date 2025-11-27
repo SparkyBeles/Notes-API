@@ -1,28 +1,47 @@
-const AWS = require('aws-sdk');
+const { GetCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
+const middy = require('@middy/core');
+const httpErrorHandler = require('@middy/http-error-handler');
+const { validateAuth } = require('../middleware/auth');
+const { dynamodb } = require('../utils/dynamodb');
+const { createResponse } = require('../utils/response');
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-module.exports.handler = async (event) => {
+const deleteNote = async (event) => {
   try {
     const { id } = event.pathParameters;
 
-    const params = {
-      TableName: 'notes-table',
-      Key: { id }
-    };
+    const existingNote = await dynamodb.send(
+      new GetCommand({
+        TableName: 'notes-table',
+        Key: { id }
+      })
+    );
 
-    await dynamodb.delete(params).promise();
+    if (!existingNote.Item) {
+      return createResponse(404, { message: 'Note not found' });
+    }
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Note deleted successfully' })
-    };
+    if (existingNote.Item.userId !== event.userId) {
+      return createResponse(403, { message: 'Access denied' });
+    }
+
+    await dynamodb.send(
+      new DeleteCommand({
+        TableName: 'notes-table',
+        Key: { id }
+      })
+    );
+
+    return createResponse(200, { 
+      success: true,
+      message: 'Note deleted successfully'
+    });
+
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Internal server error' })
-    };
+    console.error('Delete note error:', error);
+    return createResponse(500, { message: 'Failed to delete note' });
   }
 };
+
+module.exports.handler = middy(deleteNote)
+  .use(validateAuth)
+  .use(httpErrorHandler());

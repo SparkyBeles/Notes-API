@@ -9,55 +9,58 @@ provider:
   profile: ${env:PROFILE}
   iam:
     role: ${env:IAM_Role}
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET}
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
   signup:
     handler: auth/signup.handler
     events:
-      - http:
-          path: auth/signup
+      - httpApi:
+          path: /auth/signup
           method: post
 
   signin:
     handler: auth/signin.handler
     events:
-      - http:
-          path: auth/signin
+      - httpApi:
+          path: /auth/signin
           method: post
 
   createNote:
     handler: functions/createNote.handler
     events:
-      - http:
-          path: notes
+      - httpApi:
+          path: /notes
           method: post
 
   listNotes:
     handler: functions/listNotes.handler
     events:
-      - http:
-          path: notes
+      - httpApi:
+          path: /notes
           method: get
 
   getNote:
     handler: functions/getNote.handler
     events:
-      - http:
-          path: notes/{id}
+      - httpApi:
+          path: /notes/{id}
           method: get
 
   updateNote:
     handler: functions/updateNote.handler
     events:
-      - http:
-          path: notes/{id}
+      - httpApi:
+          path: /notes/{id}
           method: put
 
   deleteNote:
     handler: functions/deleteNote.handler
     events:
-      - http:
-          path: notes/{id}
+      - httpApi:
+          path: /notes/{id}
           method: delete
 
 resources:
@@ -69,9 +72,18 @@ resources:
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: userId-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
 
     UsersTable:
@@ -81,7 +93,16 @@ resources:
         AttributeDefinitions:
           - AttributeName: email
             AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
         KeySchema:
           - AttributeName: email
             KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: userId-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST

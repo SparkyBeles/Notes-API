@@ -1,49 +1,45 @@
-const AWS = require('aws-sdk');
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+const { PutCommand } = require('@aws-sdk/lib-dynamodb');
+const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
+const { dynamodb } = require('../utils/dynamodb');
+const { createResponse } = require('../utils/response');
 
 module.exports.handler = async (event) => {
   try {
     const { email, password } = JSON.parse(event.body);
 
     if (!email || !password) {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Email and password are required' })
-      };
+      return createResponse(400, { message: 'Email and password are required' });
     }
 
-    const params = {
-      TableName: 'users-table',
-      Item: {
-        email,
-        password,
-        createdAt: new Date().toISOString()
-      },
-      ConditionExpression: 'attribute_not_exists(email)'
-    };
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const userId = uuidv4();
 
-    await dynamodb.put(params).promise();
+    await dynamodb.send(
+      new PutCommand({
+        TableName: 'users-table',
+        Item: {
+          email,
+          userId,
+          password: hashedPassword,
+          createdAt: new Date().toISOString()
+        },
+        ConditionExpression: 'attribute_not_exists(email)'
+      })
+    );
 
-    return {
-      statusCode: 201,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'User created successfully', email })
-    };
+    return createResponse(201, { 
+      success: true,
+      message: 'User created successfully', 
+      userId 
+    });
+
   } catch (error) {
-    if (error.code === 'ConditionalCheckFailedException') {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'User already exists' })
-      };
+    if (error.name === 'ConditionalCheckFailedException') {
+      return createResponse(400, { message: 'User already exists' });
     }
 
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Internal server error' })
-    };
+    console.error('Signup error:', error);
+    return createResponse(500, { message: 'Internal server error' });
   }
 };
