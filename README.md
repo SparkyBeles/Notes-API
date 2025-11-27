@@ -40,7 +40,7 @@ notes-api/
 
 #### Sign Up
 
-- **POST** `/auth/signup`
+- **POST** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/auth/signup`
 - **Body:**
   ```json
   {
@@ -59,7 +59,7 @@ notes-api/
 
 #### Sign In
 
-- **POST** `/auth/signin`
+- **POST** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/auth/signin`
 - **Body:**
   ```json
   {
@@ -79,7 +79,7 @@ notes-api/
 
 #### Create Note
 
-- **POST** `/notes`
+- **POST** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes`
 - **Body:**
   ```json
   {
@@ -90,17 +90,17 @@ notes-api/
 
 #### List Notes
 
-- **GET** `/notes`
+- **GET** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes`
 - Returns only notes belonging to the authenticated user
 
 #### Get Note
 
-- **GET** `/notes/{id}`
+- **GET** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}`
 - Returns note only if it belongs to the authenticated user
 
 #### Update Note
 
-- **PUT** `/notes/{id}`
+- **PUT** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}`
 - **Body:**
   ```json
   {
@@ -112,5 +112,5 @@ notes-api/
 
 #### Delete Note
 
-- **DELETE** `/notes/{id}`
+- **DELETE** `https://8y8ws5zxf0.execute-api.eu-north-1.amazonaws.com/notes/{id}`
 
