@@ -2,6 +2,9 @@
 
 A serverless REST API built with AWS Lambda,Middy, DynamoDB and Serverless Framework.
 
+## API Docs
+https://documenter.getpostman.com/view/49734789/2sB3dLSrAq
+
 ## Project Structure
 
 ```
@@ -11,25 +14,29 @@ notes-api/
 │   └── signup.js          # User registration with password hashing
 ├── functions/             # Notes CRUD operations (auth required)
 │   ├── createNote.js      # Create new note
+│   ├── deleteNote.js      # Delete note
 │   ├── getNote.js         # Retrieve single note
-│   ├── listNotes.js       # List all user notes
-│   ├── updateNote.js      # Update existing note
-│   └── deleteNote.js      # Delete note
+│   ├── listNote.js        # List all user notes
+│   └── updateNote.js      # Update existing note
 ├── middleware/            # Custom middleware
 │   └── auth.js            # JWT validation middleware
 ├── utils/                 # Utility modules
 │   ├── dynamodb.js        # DynamoDB client configuration
 │   └── response.js        # HTTP response helper
-├── .env                   # Environment configuration
-├── serverless.yml         # Serverless deployment config
-└── package.json           # Dependencies
+├── .env                   # aws & jws secrets
+├── .gitignore
+├──  Postman config        
+├── README.md              
+├── package-lock.json      # Dependencies
+├── package.json           # Dependencies
+└── serverless.ymlv        # Serverless deployment config
 ```
 
 
 
 ## API Endpoints
 
-### Authentication (Public)
+### Authentication 
 
 #### Sign Up
 
