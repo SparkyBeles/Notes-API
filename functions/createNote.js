@@ -1,47 +1,49 @@
-const AWS = require('aws-sdk');
+const { PutCommand } = require('@aws-sdk/lib-dynamodb');
 const { v4: uuidv4 } = require('uuid');
+const middy = require('@middy/core');
+const httpErrorHandler = require('@middy/http-error-handler');
+const { validateAuth } = require('../middleware/auth');
+const { dynamodb } = require('../utils/dynamodb');
+const { createResponse } = require('../utils/response');
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-module.exports.handler = async (event) => {
+const createNote = async (event) => {
   try {
-    const { title, content, userId } = JSON.parse(event.body);
+    const { title, content } = JSON.parse(event.body);
 
     if (!title || !content) {
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: 'Title and content are required' })
-      };
+      return createResponse(400, { message: 'Title and content are required' });
     }
 
-    const id = uuidv4();
+    const noteId = uuidv4();
     const timestamp = new Date().toISOString();
 
-    const params = {
-      TableName: 'notes-table',
-      Item: {
-        id,
-        userId: userId || 'anonymous',
-        title,
-        content,
-        createdAt: timestamp,
-        updatedAt: timestamp
-      }
+    const noteItem = {
+      id: noteId,
+      userId: event.userId,
+      title,
+      content,
+      createdAt: timestamp,
+      updatedAt: timestamp
     };
 
-    await dynamodb.put(params).promise();
+    await dynamodb.send(
+      new PutCommand({
+        TableName: 'notes-table',
+        Item: noteItem
+      })
+    );
 
-    return {
-      statusCode: 201,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params.Item)
-    };
+    return createResponse(201, { 
+      success: true,
+      note: noteItem
+    });
+
   } catch (error) {
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Internal server error' })
-    };
+    console.error('Create note error:', error);
+    return createResponse(500, { message: 'Failed to create note' });
   }
 };
+
+module.exports.handler = middy(createNote)
+  .use(validateAuth)
+  .use(httpErrorHandler());
